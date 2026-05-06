@@ -812,5 +812,11 @@ async function tampilkanRiwayat() {
   } catch (e) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:red;">Gagal memuat data</td></tr>'; }
 }
 </script>
+  <script>
+// Service Worker untuk PWA
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('data:application/javascript;base64,' + btoa('self.addEventListener("install",e=>{e.waitUntil(caches.open("ac-v1").then(c=>c.addAll(["/"])));self.skipWaiting()});self.addEventListener("fetch",e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)).catch(()=>new Response("Offline")))});'));
+}
+</script>
 </body>
 </html>
