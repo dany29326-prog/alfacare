@@ -408,6 +408,7 @@ async function doLogin() {
     const result = await response.json();
     if (result.status === "ok") {
       currentPetugas = result.petugas;
+	  currentPetugas.target = result.petugas.target || 5000000;
       if (remember) { localStorage.setItem('alfa_nama', nama); }
       else { localStorage.removeItem('alfa_nama'); }
       document.getElementById('dash-name').textContent = currentPetugas.nama + ' 👋';
@@ -457,7 +458,7 @@ function togglePassword() {
 
 function updateDashboard() {
   const total = donasiList.reduce((s, d) => s + d.nominal, 0);
-  const target = 50000000;
+  const target = currentPetugas.target || 5000000;
   const pct = Math.min(Math.round(total / target * 100), 100);
   document.getElementById('dash-total').textContent = formatRp(total);
   document.getElementById('dash-bar').style.width = pct + '%';
@@ -785,7 +786,7 @@ async function loadStatistikProfil() {
     const data = await res.json();
     if (data.status === "ok") { document.getElementById('p-total').textContent = 'Rp ' + data.ringkasan.total_donasi.toLocaleString('id-ID'); document.getElementById('p-transaksi').textContent = data.ringkasan.jml_transaksi; document.getElementById('p-rata').textContent = 'Rp ' + data.ringkasan.rata_rata.toLocaleString('id-ID'); }
   } catch (e) { }
-  const target = 5000000;
+  const target = currentPetugas.target || 5000000;
   if (target > 0) {
     document.getElementById('profil-target-card').style.display = 'block';
     document.getElementById('p-target').textContent = 'Rp ' + target.toLocaleString('id-ID');
