@@ -261,7 +261,7 @@ table.laporan-tabel tr:last-child td{border-bottom:none}
     <div class="dash-nav"><div class="dash-nav-item active">Dashboard</div><div class="dash-nav-item" onclick="bukaRiwayat()">Riwayat</div><div class="dash-nav-item" onclick="bukaLaporan()">Laporan</div></div>
   </div>
   <div class="dash-body">
-    <div class="hero-card"><div class="hero-label">Total Donasi Terkumpul</div><div class="hero-amount" id="dash-total">Rp 0</div><div class="hero-target">dari target <strong>Rp 50.000.000</strong></div><div class="hero-bar-wrap"><div class="hero-bar" id="dash-bar" style="width:0%"></div></div><div style="font-size:11px;color:rgba(255,255,255,.7)" id="dash-bar-label">Rp 0 / Rp 50.000.000</div><div class="hero-pct"><div class="hero-pct-num" id="dash-pct">0%</div><div class="hero-pct-label">Tercapai</div></div></div>
+    <div class="hero-card"><div class="hero-label">Total Donasi Terkumpul</div><div class="hero-amount" id="dash-total">Rp 0</div><div class="hero-target">dari target <strong id="dash-target-text">Rp 0</strong></div><div class="hero-bar-wrap"><div class="hero-bar" id="dash-bar" style="width:0%"></div></div><div style="font-size:11px;color:rgba(255,255,255,.7)" id="dash-bar-label">Rp 0 / Rp 50.000.000</div><div class="hero-pct"><div class="hero-pct-num" id="dash-pct">0%</div><div class="hero-pct-label">Tercapai</div></div></div>
     <div class="quick-row">
       <div class="quick-btn" onclick="goToForm()"><div class="q-icon q-blue">➕</div><span>Catat Donasi</span></div>
       <div class="quick-btn" onclick="bukaLaporan()"><div class="q-icon q-green">📊</div><span>Laporan</span></div>
@@ -409,6 +409,7 @@ async function doLogin() {
     if (result.status === "ok") {
       currentPetugas = result.petugas;
 	  currentPetugas.target = result.petugas.target || 5000000;
+	  currentPetugas.target = result.petugas.target || 5000000;
       if (remember) { localStorage.setItem('alfa_nama', nama); }
       else { localStorage.removeItem('alfa_nama'); }
       document.getElementById('dash-name').textContent = currentPetugas.nama + ' 👋';
@@ -465,6 +466,7 @@ function updateDashboard() {
   document.getElementById('dash-pct').textContent = pct + '%';
   document.getElementById('dash-bar-label').textContent = formatRpShort(total) + ' / ' + formatRpShort(target);
   document.getElementById('stat-donatur').textContent = donasiList.length;
+  document.getElementById('dash-target-text').textContent = formatRp(currentPetugas.target || 5000000);
   renderChart();
 }
 
