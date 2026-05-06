@@ -584,7 +584,31 @@ function kirimKwitansiWA() {
   else if (nomor.startsWith('8')) nomor = '62' + nomor;
   const nominalFmt = 'Rp ' + Number(d.nominal).toLocaleString('id-ID');
   const baris = '━━━━━━━━━━━━━━━━━━━━━━';
-  const pesan = `╔══════════════════════╗\n🏦 *AlfaCare Smart System*\n📋 *BUKTI DONASI RESMI*\n╚══════════════════════╝\n\n${baris}\n🔖 *No. Kwitansi*\n    ${d.trxId}\n\n📅 *Tanggal* : ${d.tanggal}\n⏰ *Waktu*   : ${d.waktu} WIB\n${baris}\n\n👤 *Nama Donatur*\n    ${d.donatur_nama}\n\n💚 *Jenis Donasi* : *${d.jenis.toUpperCase()}*\n💰 *Nominal*      : *${nominalFmt}*\n💳 *Metode Bayar* : ${d.metode_bayar || 'Cash'}${d.catatan ? '\n📝 *Catatan* : ' + d.catatan : ''}\n\n${baris}\n🧑 *Petugas* : ${d.petugas_nama}\n🪪 *ID*      : ${d.petugas_id}\n${baris}\n\n✅ *Donasi Anda telah diterima*\n🤲 _Jazakallahu khairan katsiran_\n_Semoga menjadi amal jariyah._\n_Aamiin_ 🙏\n\n${baris}\n_AlfaCare Smart System_\n_Karanganyar, Jawa Tengah_`;
+  const pesan = `*🏦 ALFACARE SMART SYSTEM*\n` +
+    `*📋 BUKTI DONASI RESMI*\n\n` +
+    `${baris}\n` +
+    `🔖 *No. Kwitansi*\n` +
+    `    ${d.trxId}\n\n` +
+    `📅 *Tanggal* : ${d.tanggal}\n` +
+    `⏰ *Waktu*   : ${d.waktu} WIB\n` +
+    `${baris}\n\n` +
+    `👤 *Nama Donatur*\n` +
+    `    ${d.donatur_nama}\n\n` +
+    `💚 *Jenis Donasi* : *${d.jenis.toUpperCase()}*\n` +
+    `💰 *Nominal*      : *${nominalFmt}*\n` +
+    `💳 *Metode Bayar* : ${d.metode_bayar || 'Cash'}\n` +
+    (d.catatan ? `📝 *Catatan* : ${d.catatan}\n` : '') +
+    `\n${baris}\n` +
+    `🧑 *Petugas* : ${d.petugas_nama}\n` +
+    `🪪 *ID*      : ${d.petugas_id}\n` +
+    `${baris}\n\n` +
+    `✅ *Donasi Anda telah diterima*\n` +
+    `🤲 _Jazakallahu khairan katsiran_\n` +
+    `_Semoga menjadi amal jariyah._\n` +
+    `_Aamiin_ 🙏\n\n` +
+    `${baris}\n` +
+    `_AlfaCare Smart System_\n` +
+    `_Boyolali, Jawa Tengah_`;
   window.open(`https://wa.me/${nomor}?text=${encodeURIComponent(pesan)}`, '_blank');
   const btn = document.getElementById('btn-kirim-wa'); btn.innerHTML = '✅ Kwitansi Terkirim!'; btn.disabled = true; btn.style.background = '#16C784';
 }
