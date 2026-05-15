@@ -401,6 +401,44 @@ async function doLogin() {
   const originalText = btn.textContent;
   btn.textContent = '⏳ Memverifikasi...';
   btn.disabled = true;
+  
+  // ========== CEK CACHE DULU ==========
+  const cacheKey = 'alfa_auth_' + nama.toLowerCase();
+  const cacheRaw = localStorage.getItem(cacheKey);
+  if (cacheRaw) {
+    try {
+      const cache = JSON.parse(cacheRaw);
+      if (Date.now() < cache.expiry && 
+          cache.pass === pass && 
+          cache.petugas.status.toLowerCase() === 'aktif') {
+        // Cache valid → langsung masuk!
+        currentPetugas = cache.petugas;
+        currentPetugas.target = currentPetugas.target || 5000000;
+        if (remember) { localStorage.setItem('alfa_nama', nama); }
+        else { localStorage.removeItem('alfa_nama'); }
+        document.getElementById('dash-name').textContent = currentPetugas.nama + ' 👋';
+        document.getElementById('dash-id').textContent = 'ID: ' + currentPetugas.id + ' • Fundraiser Aktif';
+        const dashAv = document.getElementById('dash-av');
+        if (currentPetugas.foto) {
+          dashAv.innerHTML = `<img class="dash-avatar-foto" src="${currentPetugas.foto}" onerror="this.style.display='none';this.parentElement.textContent='${currentPetugas.nama.charAt(0).toUpperCase()}';">`;
+        } else {
+          dashAv.textContent = currentPetugas.nama.charAt(0).toUpperCase();
+        }
+        if (currentPetugas.area) {
+          document.getElementById('dash-area').textContent = '📍 ' + currentPetugas.area;
+          document.getElementById('dash-area').style.display = 'inline-block';
+        } else { document.getElementById('dash-area').style.display = 'none'; }
+        updateDashboard(); renderChart(); fetchDatabaseDonatur(); fetchDashboardData();
+        showScreen('dashboard');
+        renderAktivitas();
+        btn.textContent = originalText; btn.disabled = false;
+        showToast('⚡ Login instan, ' + currentPetugas.nama + '!');
+        return; // STOP, tidak perlu fetch GAS
+      }
+    } catch(e) {}
+  }
+  
+  // ========== CACHE TIDAK ADA → FETCH GAS ==========
   try {
     const response = await fetch(GAS_URL, {
       method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -409,8 +447,16 @@ async function doLogin() {
     const result = await response.json();
     if (result.status === "ok") {
       currentPetugas = result.petugas;
-	  currentPetugas.target = result.petugas.target || 5000000;
-	  currentPetugas.target = result.petugas.target || 5000000;
+      currentPetugas.target = result.petugas.target || 5000000;
+      
+      // Simpan cache (24 jam)
+      localStorage.setItem(cacheKey, JSON.stringify({
+        nama: nama,
+        pass: pass,
+        petugas: result.petugas,
+        expiry: Date.now() + (24 * 60 * 60 * 1000)
+      }));
+      
       if (remember) { localStorage.setItem('alfa_nama', nama); }
       else { localStorage.removeItem('alfa_nama'); }
       document.getElementById('dash-name').textContent = currentPetugas.nama + ' 👋';
@@ -439,8 +485,13 @@ async function doLogin() {
 }
 
 function doLogout() {
-  currentPetugas = null; showScreen('login');
+  // Hapus cache login
   const savedNama = localStorage.getItem('alfa_nama');
+  if (savedNama) {
+    localStorage.removeItem('alfa_auth_' + savedNama.toLowerCase());
+  }
+  
+  currentPetugas = null; showScreen('login');
   if (savedNama) {
     document.getElementById('login-nama').value = savedNama;
     document.getElementById('login-remember').checked = true;
